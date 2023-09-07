@@ -1,7 +1,7 @@
 const express = require('express');
 const morgan = require('morgan');
 const mongoose = require('mongoose');
-
+const Blog = require('./models/blog');
 
 // exporess app
 const  app = express()
@@ -33,6 +33,43 @@ app.set('view engine', 'ejs')
 app.use(express.static('public'))
 app.use(morgan('dev'));
 
+// mongoose and mongo sandbox routes
+app.get('/add-blog', (req, res) => {
+    const blog = new Blog({
+        title: 'new blog 2',
+        snippet: 'about my new blog',
+        body: 'more about my new blog'
+    });
+    blog.save()
+    .then((result) => {
+        res.send(result)
+    })
+    .catch((err) => {
+        console.log(err);
+    })
+}) 
+// this is used ot get all ht eblogs from the mongo db collection
+app.get('/all-blogs', (req, res) => {
+    Blog.find()
+    .then((result) => {
+        res.send(result);
+    })
+    .catch((err) => {
+        console.log(err);
+    })
+});
+
+// this is used to get only a single data from the mongo db
+app.get('/single-blog', (req, res) => {
+    Blog.findById('64f98e552a6bf7eac33f8ab5')
+    .then((result) => {
+        res.send(result)
+    })
+    .catch((err) => {
+        console.log(err);
+    })
+})
+
 // this us used ot listen for a get request
 app.get('/', (req, res) => {
   //  res.send('<p>Homepage</p>');
@@ -59,6 +96,18 @@ app.get('/about', (req, res) => {
 app.get('/about-us', (req, res) => {
     res.redirect('/about');
 })
+
+
+app.get('/blogs', (req, res) => {
+    Blog.find().sort({ createdAt: -1})
+    .then((result) => {
+        res.render('index', {title: 'All Blogs', blogs: result})
+    }).catch((err) => {
+        console.log(err);
+    })
+})
+
+
 
 app.get('/blogs/create', (req, res) => {
     res.render('create', {title: 'Create'})

@@ -3,7 +3,7 @@
 <body>
 <%- include('./partials/nav.ejs')%>
     <div class="create-blog content">
-        <form>
+        <form action="/blogs" methoid="POST">
             <label for="title">Blog Title:</label>
             <input type="text" id="title" required />
             <label for="snippet">Blog Snippet</label>
